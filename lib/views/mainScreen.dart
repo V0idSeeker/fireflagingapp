@@ -10,19 +10,32 @@ class MainScrean extends StatelessWidget {
 
     return GetBuilder<InterfaceControler>(
       init: InterfaceControler(),
-      builder: (controler) {
+      builder: (controller) {
         return Scaffold(
-            body: controler.mainscreen,
+            body: controller.mainscreen,
             bottomNavigationBar: BottomNavigationBar(
               onTap: (index){
-                if(index==0) controler.changeScreen("camera");
-                else controler.changeScreen("maps");
+
+                switch (index){
+                  case 0:{
+                    controller.changeScreen("camera");
+                  break;
+                  }
+
+                  case 1:{
+                    controller.changeScreen("test");
+                    break;
+                  }
+                };
+
+
               },
               items: [
                 BottomNavigationBarItem(
                     icon: Icon(Icons.camera), label: "Camera"),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.map), label: "Fire Map"),
+
               ],
             ));
       },

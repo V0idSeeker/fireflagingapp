@@ -1,9 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:camera/camera.dart';
 import 'package:firesigneler/databaseManeger.dart';
+import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:flutter_vision/flutter_vision.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+import '../modules/Fire.dart';
 
 class ScanControler extends GetxController {
   DatabaseManeger db = DatabaseManeger();
@@ -13,16 +20,21 @@ class ScanControler extends GetxController {
   int cameraCount = 0;
   double x = 0, y = 0, w = 0, h = 00;
   String label = "";
-
+  final recorder = FlutterSoundRecorder();
+  Uint8List? audioBytes;
+  RxBool isRecording=false.obs;
   int timer = 0;
   bool detect = false;
   late FlutterVision vision;
+  late CameraImage img;
+  late Fire fire;
 
   @override
   onInit() {
     super.onInit();
-    initCamera();
-    initTFLite();
+    _initCamera();
+    _initTFLite();
+    _initRecorder();
   }
 
   @override
@@ -30,10 +42,11 @@ class ScanControler extends GetxController {
 
     cameraController.dispose();
     vision.closeYoloModel();
+    recorder.closeRecorder();
     super.dispose();
   }
 
-  initCamera() async {
+   Future<void> _initCamera() async {
     if (await Permission.camera.request().isGranted) {
       cameras = await availableCameras();
       cameraController = CameraController(cameras[0], ResolutionPreset.medium,
@@ -57,7 +70,8 @@ class ScanControler extends GetxController {
       print("Permission Denied");
   }
 
-  initTFLite() async {
+  Future<void> _initTFLite() async {
+
     vision = FlutterVision();
     await vision.loadYoloModel(
         modelPath: "assets/firesmoke32.tflite",
@@ -67,6 +81,32 @@ class ScanControler extends GetxController {
         numThreads: 1,
         useGpu: false);
   }
+
+  Future<void> _initRecorder() async{
+    final status = await Permission.microphone.request();
+    if(status != PermissionStatus.granted)
+
+      throw("microphon permission not granted");
+
+    await recorder.openRecorder();
+    recorder.setSubscriptionDuration(Duration(minutes: 1));
+
+  }
+  Future startRecord() async{
+    await recorder.startRecorder(toFile: 'audio');
+    isRecording.value=true;
+    update();
+  }
+  Future stopRecord() async{
+    isRecording.value=false;
+
+    final path = await recorder.stopRecorder();
+    if(path.isNull) return ;
+     audioBytes = await File(path!).readAsBytes();
+    update();
+
+  }
+
 
   fireDetector(CameraImage image) async {
     var detector = await vision.yoloOnFrame(
@@ -80,7 +120,8 @@ class ScanControler extends GetxController {
     if (detector != null) {
 
       if (detector.length != 0 && detector.first["box"][4] * 100 > 20) {
-        print(detector);
+        img=image;
+
         var firstValue = detector.first;
         label = detector.first["tag"].toString();
         timer = 0;
@@ -100,7 +141,8 @@ class ScanControler extends GetxController {
         timer++;
       }
 
-      if (timer >= 10) {
+      if (timer >= 5) {
+
         timer = 0;
         detect = false;
         w = 0;
@@ -112,14 +154,22 @@ class ScanControler extends GetxController {
   }
 
   Future<void> signalFire() async {
+
+
+
     LocationPermission locationPermission = await Geolocator.checkPermission();
     if (locationPermission == "denied" || locationPermission == "deniedForever")
-      ;
+
     await Geolocator.requestPermission();
 
     Position currentPossion = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
-
-    await db.addFire(currentPossion.latitude, currentPossion.latitude);
+    fire= new Fire(currentPossion.longitude,currentPossion.latitude,"Undiffined");
+    fire.setAudio(audioBytes);
+     fire.setImage(img);
+    await db.addFire(fire);
   }
+
+
+
 }

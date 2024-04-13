@@ -1,7 +1,12 @@
+import 'dart:typed_data';
+
+import 'package:camera/camera.dart';
+import 'package:firesigneler/modules/Fire.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseManeger {
   static  Database? _database ;
+
 
 
   Future<Database?> get database async {
@@ -13,7 +18,8 @@ class DatabaseManeger {
   }
   Future<Database> initDB() async {
     var databasesPath = await getDatabasesPath();
-    String path = [databasesPath,"//", "data.db"].join();
+     //var databasesPath ="https://192.168.1.111/Users/rezki/Desktop/database";
+    String path = [databasesPath,"//", "database.db"].join();
     Database database = await openDatabase(path, version: 1,
         onCreate: _onCreate
         );
@@ -27,25 +33,31 @@ Future<void> _onCreate(Database database, int version) async {
    CREATE TABLE IF NOT EXISTS "Fires"(
    fireId INTEGER PRIMARY KEY NOT NULL,
    locationLat Double,
-   locationLong Double
+   locationLong Double,
+   audio Text,
+   image blob
    );
    """);
-  await db.rawInsert("""Insert Into Fires (locationLat , locationLong) values (? ,?) , (?,?) , (?,?) ;""",[
-    36.751669, 3.469903 , 36.752121, 3.469988 , 36.751520, 3.467131
-  ]);
+
 
 
 }
-Future <List<Map<String, Object?>>?> getCords()async{
-    await database;
+Future <List<Fire>> getFires()async{
+  var databasesPath = await getDatabasesPath();
+
+  await database;
+
     List<Map<String , Object?>>? results = await _database?.rawQuery("Select * from Fires ");
-    return results ;
+    if(results==null ) return [];
+    List<Fire> fires=[];
+    results.forEach((element) {fires.add(Fire.fromMap(element));});
+    return fires ;
 }
 
-  Future <void> addFire(double lat , double long)async{
+  Future <void> addFire(Fire fire)async{
     await database;
-     await _database?.rawInsert("Insert Into  Fires (locationLat , locationLong) values ( ?, ?) " , [lat , long]);
 
+     await _database?.rawInsert("Insert Into  Fires (locationLat , locationLong , audio , image) values ( ?, ? , ?, ?) " , [fire.latitude , fire.longitude , fire.audiobits , fire.image]);
   }
 
 

@@ -11,14 +11,16 @@ class InterfaceControler extends GetxController {
   @override
   onInit() {
     super.onInit();
-    mainscreen =CameraView();
+    mainscreen =MapView();
   }
 
   changeScreen(String to) async{
     if( to=="camera" && mainscreen is  CameraView)return ;
     if( to=="maps" && mainscreen is  MapView)return ;
-    if(to=="camera") mainscreen=CameraView();
-    else mainscreen=MapView();
+    if( to=="test" && mainscreen is  MapView)return ;
+    if(to=="test") mainscreen=new MapView();
+    else if(to=="camera") mainscreen=new CameraView();
+    else mainscreen=new MapView();
     update();
 
   }

@@ -21,6 +21,7 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
+    curly_braces_in_flow_control_structures : false
     prefer_const_constructors: false
     prefer_const_literals_to_create_immutables : false
 
