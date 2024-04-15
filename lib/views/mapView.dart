@@ -22,8 +22,6 @@ class MapView extends StatelessWidget {
             options: MapOptions(
                 maxZoom: 18, center: LatLng(36.7631187, 3.47637), zoom: 18),
             children: [
-
-
               TileLayer(
                 urlTemplate:
                     'https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}',
