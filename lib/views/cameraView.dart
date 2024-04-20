@@ -65,11 +65,12 @@ class CameraView extends StatelessWidget {
                                 }
                               },
                               child: recordingStatus),
-                          TextButton(
+                          ElevatedButton(
                             child: Center(child: Text('Flag Fire')),
                             onPressed: () async {
                               if (controler.isRecording.isFalse) {
                                 var f=await controler.getImage();
+                                await controler.signalFire();
                                 showDialog(
                                     context: context,
                                     builder: (context) {

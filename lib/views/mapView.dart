@@ -60,8 +60,15 @@ class MapView extends StatelessWidget {
                   if(snapshot.connectionState==ConnectionState.waiting) return Center(child: CircularProgressIndicator(),);
                   return  ListView.separated(itemBuilder: (context , index){
                     return ListTile(
-                      leading: controller.fires[index].getImage(),
+
                       title: Text(controller.fires[index].longitude.toString()),
+                      onLongPress: (){
+                        showDialog(context: context, builder: (context){
+                          return AlertDialog(
+                            content:Image.memory(controller.fires[index].image!, fit: BoxFit.fill,) ,
+                          );
+                        });
+                      },
                       onTap: (){
                         controller.moveMap(index);
                       },

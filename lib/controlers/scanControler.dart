@@ -21,12 +21,11 @@ class ScanControler extends GetxController {
   double x = 0, y = 0, w = 0, h = 00;
   String label = "";
   final recorder = FlutterSoundRecorder();
-  Uint8List? audioBytes;
+  Uint8List? audioBytes , img;
   RxBool isRecording=false.obs;
   int timer = 0;
   bool detect = false;
   late FlutterVision vision;
-  late CameraImage img;
   late Fire fire;
 
   @override
@@ -121,8 +120,6 @@ class ScanControler extends GetxController {
     if (detector != null) {
 
       if (detector.length != 0 && detector.first["box"][4] * 100 > 20) {
-        img=image;
-
         var firstValue = detector.first;
         label = detector.first["tag"].toString();
         timer = 0;
@@ -156,17 +153,13 @@ class ScanControler extends GetxController {
    getImage()async{
 
      XFile f=await cameraController.takePicture();
-     Uint8List data=await f.readAsBytes();
+     img=await f.readAsBytes();
 
-     return data;
+
+     return img;
   }
 
   Future<void> signalFire() async {
-
-
-
-
-
 
     LocationPermission locationPermission = await Geolocator.checkPermission();
     if (locationPermission == "denied" || locationPermission == "deniedForever")
@@ -175,10 +168,10 @@ class ScanControler extends GetxController {
 
     Position currentPossion = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
-    fire= new Fire(currentPossion.longitude,currentPossion.latitude,"Undiffined");
+    fire= new Fire(currentPossion.longitude,currentPossion.latitude,"Undiffined",DateTime.now());
     fire.setAudio(audioBytes);
 
-     fire.setImage(img);
+     fire.setImage(img!);
     await db.addFire(fire);
   }
 

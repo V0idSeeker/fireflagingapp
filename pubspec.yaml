@@ -28,9 +28,9 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  http:
   flutter_map:
   latlong2:
-  sqflite:
   geolocator:
   flutter_sound:
   get:
@@ -38,7 +38,6 @@ dependencies:
   flutter_vision:
   camera:
   permission_handler:
-  flutter_map_cancellable_tile_provider:
   flutter:
     sdk: flutter
 
