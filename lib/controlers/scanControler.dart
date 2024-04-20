@@ -92,6 +92,7 @@ class ScanControler extends GetxController {
     recorder.setSubscriptionDuration(Duration(minutes: 1));
 
   }
+
   Future startRecord() async{
     await recorder.startRecorder(toFile: 'audio');
     isRecording.value=true;
@@ -152,8 +153,18 @@ class ScanControler extends GetxController {
       update();
     }
   }
+   getImage()async{
+
+     XFile f=await cameraController.takePicture();
+     Uint8List data=await f.readAsBytes();
+
+     return data;
+  }
 
   Future<void> signalFire() async {
+
+
+
 
 
 
@@ -166,6 +177,7 @@ class ScanControler extends GetxController {
         desiredAccuracy: LocationAccuracy.best);
     fire= new Fire(currentPossion.longitude,currentPossion.latitude,"Undiffined");
     fire.setAudio(audioBytes);
+
      fire.setImage(img);
     await db.addFire(fire);
   }

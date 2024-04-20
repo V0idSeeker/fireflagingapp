@@ -69,7 +69,7 @@ class CameraView extends StatelessWidget {
                             child: Center(child: Text('Flag Fire')),
                             onPressed: () async {
                               if (controler.isRecording.isFalse) {
-                                await controler.signalFire();
+                                var f=await controler.getImage();
                                 showDialog(
                                     context: context,
                                     builder: (context) {
@@ -80,7 +80,8 @@ class CameraView extends StatelessWidget {
                                             child:
                                                 Text("Fire Have Been Flagged")),
                                         content:
-                                            Text("thank you for your help"),
+                                          Image.memory(f)
+                                        //Text("thank you for your help"),
                                       );
                                     });
                               }
