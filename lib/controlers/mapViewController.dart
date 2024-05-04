@@ -2,66 +2,61 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter/material.dart';
-import '../databaseManeger.dart';
+import '../modules/DatabaseManeger.dart';
 import '../modules/Fire.dart';
 
 class MapViewController extends GetxController {
-  MapController mapController = MapController();
-  late MapOptions mapOptions;
-  List<CircleMarker> markersList = [];
-  List<Fire> fires = [];
-
+  LatLng currentPosition =LatLng(0, 0);
+  double listSlider=0.1;
+  MapOptions mapOptions=MapOptions(center: LatLng(0,0) ,zoom: 4);
+  MapController mapController=new MapController();
+  List<Fire>? activeFiresList=null ;
   late DatabaseManeger db;
+
+
   @override
-  onInit() async {
-    db = DatabaseManeger();
-    await setupMap();
-    await getPoints();
+  void onInit() {
+    db = new DatabaseManeger();
+
     super.onInit();
   }
 
-  @override
-  dispose() {
-    super.dispose();
+  listController(){
+    listSlider = listSlider==0.1? 0.4 :0.1;
+    update(["FiresList","FiresMap"]);
+
   }
 
-  Future<void> setupMap() async {
-    Position currentLocation = await getCurrentLocation();
-    mapOptions =
-        MapOptions(maxZoom: 18, center: LatLng(36.7631187, 3.47637), zoom: 8);
+  Future<void> setupFireMap()async{
+    await markRespondent();
+    Map<String , dynamic> loc=await db.latLongToCity(currentPosition.latitude, currentPosition.longitude);
+    activeFiresList=await db.getActiveLocalFires(loc["city"]);
+    update(["FiresList","FiresMap"]);
+
+    mapController.move(currentPosition, 15);
+
   }
 
-  Future<void> getFires() async {
-    if (fires.isNotEmpty) return;
-    fires = await db.getFires();
+  Future<void> markRespondent() async {
+
+    if(currentPosition==LatLng(0,0)) {
+      LocationPermission locationPermission = await Geolocator.checkPermission();
+      print("permission : $locationPermission");
+      if (locationPermission == LocationPermission.denied || locationPermission == LocationPermission.deniedForever)
+
+        await Geolocator.requestPermission();
+
+      Position currentPossion = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.best);
+
+      currentPosition=LatLng(currentPossion.latitude, currentPossion.longitude);
+      update(["respondentPosition"]);
+    }
+    else mapOptions=MapOptions(initialCenter: currentPosition, initialZoom: 15);
+  }
+  moveMap(LatLng pos){
+    mapController.move(pos, 15  );
   }
 
-  Future<void> getPoints() async {
-    fires = await db.getFires();
-    if (fires.length == markersList.length) return;
-    fires.forEach((element) {
-      markersList.add(new CircleMarker(
-          point: LatLng(element.latitude, element.longitude),
-          radius: 40,
-        color: Colors.redAccent.shade400.withOpacity(0.4)
-      ));
-    });
-  }
 
-  Future<void> moveMap(int index) async {
-    mapController.move(markersList[index].point, 15);
-
-    update();
-  }
-
-  getCurrentLocation() async {
-    LocationPermission locationPermission = await Geolocator.checkPermission();
-    if (locationPermission == "denied" || locationPermission == "deniedForever")
-      ;
-    await Geolocator.requestPermission();
-
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
-  }
 }

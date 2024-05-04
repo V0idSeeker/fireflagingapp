@@ -1,80 +1,60 @@
-import 'dart:convert';
-import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 
 
 class Fire {
- late double longitude , latitude ;
- late String flag="proccecing";
- late DateTime flagDate;
- Uint8List? image;
- Uint8List? audiobits;
+  late int fireId;
+  late String city ,optimalAddr,fireStatus="active";
+  late double optimalPositionLong , optimalPositionLat;
+  DateTime? initialDate=DateTime.now() ,finalDate;
 
 
 
+  Fire.fromMap(Map<String,dynamic> map){
 
- Fire(double long,double lat,String flag ,DateTime fireDate ) {
-  this.latitude=lat;
-  this.longitude=long;
-  this.flag=flag;
-  this.flagDate=fireDate;
+    fireId=int.tryParse(map["fireId"].toString())!;
 
+    city=map["city"];
 
- }
+    fireStatus=map["fireStatus"];
 
- void setImage(Uint8List img) {
-  image = img;
- }
+    initialDate=DateTime.parse(map["initialDate"].toString());
 
- Image getImage( ) {
-  return Image.memory(image!);
+    finalDate=DateTime.tryParse(map["finalDate"].toString());
 
- }
- void setAudio(Uint8List? audio)=>this.audiobits=audio ;
+    optimalPositionLong=double.parse(map["optimalPositionLong"].toString());
 
+    optimalPositionLat=double.parse(map["optimalPositionLat"].toString());
 
+    optimalAddr=map["optimalAddr"];
 
+  }
+  Map<String,dynamic> toMap(){
+    return {
+      "fireId" : fireId.toString(),
+      "city" : city,
+      "fireStatus" : fireStatus,
+      "optimalPositionLong" : optimalPositionLong.toString(),
+      "optimalPositionLat" : optimalPositionLat.toString(),
+      "optimalAddr" : optimalAddr,
+      "initialDate" : initialDate.toString(),
+      "finalDate" : finalDate.toString(),
+    };
 
- Fire.fromMap(Map<String, dynamic> map ){
-  this.longitude=double.parse(map["locationLong"].toString());
-  this.latitude=double.parse(map["locationLat"].toString());
-  this.flag=map["flag"].toString();
-  this.flagDate=DateTime.parse(map["flagDate"].toString());
-
-   this.image = base64Decode(map["image"]);
-
-
-
-  this.audiobits=null;
-
- }
-
- Map<String , dynamic>toMap(){
-  return {
-   "locationLat":latitude.toString(),
-   "locationLong":longitude.toString(),
-   "image":image.toString(),
-   "flag":flag,
-   "flagDate":flagDate.toString(),
-
-  };
- }
+  }
 
 
 
+  @override
+  String toString() {
 
-
-
- @override
- String toString() {
-
-  return """
-    [ Longtitude :$longitude , Latitude :$latitude ,  flag :$flag ,
-    date $flagDate,
-    
-    ]
-    """;
- }
+    return """ Fire :{
+    fireId: $fireId,city: $city,
+    fireStatus: $fireStatus,
+    optimalPositionLong: $optimalPositionLong,
+    optimalPositionLat: $optimalPositionLat,
+    optimalAddr: $optimalAddr,
+    initialDate: $initialDate, finalDate: $finalDate,
+    }""";
+  }
 
 }

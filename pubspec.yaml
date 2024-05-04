@@ -27,14 +27,15 @@ environment:
 # dependencies can be manually updated by changing the version numbers below to
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
+
 dependencies:
+  url_launcher: ^6.2.6
   http:
   flutter_map:
   latlong2:
   geolocator:
   flutter_sound:
   get:
-  image:
   flutter_vision:
   camera:
   permission_handler:
