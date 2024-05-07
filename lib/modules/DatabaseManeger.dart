@@ -11,7 +11,10 @@ class DatabaseManeger {
   String authgeo="741499549589927466382x105731";
 
   DatabaseManeger() {
-     url = Uri.http("192.168.1.111","api/index.php");
+    //for local
+    url = Uri.http("192.168.1.111", "api/index.php");
+    //for partage
+    url=Uri.http("192.168.214.111", "api/index.php");
   }
 
   //fire section
