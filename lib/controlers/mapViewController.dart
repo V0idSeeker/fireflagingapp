@@ -1,9 +1,9 @@
+import 'package:firesigneler/modules/DatabaseManeger.dart';
+import 'package:firesigneler/modules/Fire.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import '../modules/DatabaseManeger.dart';
-import '../modules/Fire.dart';
 
 class MapViewController extends GetxController {
   LatLng currentPosition =LatLng(0, 0);
@@ -16,7 +16,9 @@ class MapViewController extends GetxController {
 
   @override
   void onInit() {
+
     db = new DatabaseManeger();
+
 
     super.onInit();
   }
@@ -29,11 +31,15 @@ class MapViewController extends GetxController {
 
   Future<void> setupFireMap()async{
     await markRespondent();
+    mapController.move(currentPosition, 15);
+
     Map<String , dynamic> loc=await db.latLongToCity(currentPosition.latitude, currentPosition.longitude);
+
     activeFiresList=await db.getActiveLocalFires(loc["city"]);
     update(["FiresList","FiresMap"]);
 
-    mapController.move(currentPosition, 15);
+
+
 
   }
 
@@ -41,7 +47,7 @@ class MapViewController extends GetxController {
 
     if(currentPosition==LatLng(0,0)) {
       LocationPermission locationPermission = await Geolocator.checkPermission();
-      print("permission : $locationPermission");
+
       if (locationPermission == LocationPermission.denied || locationPermission == LocationPermission.deniedForever)
 
         await Geolocator.requestPermission();

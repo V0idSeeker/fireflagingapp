@@ -10,6 +10,7 @@ class MainScrean extends StatelessWidget {
     return GetBuilder<InterfaceControler>(
       init: InterfaceControler(),
       builder: (controller) {
+        controller.cnx();
         return Scaffold(
             body: controller.mainscreen,
             bottomNavigationBar: BottomNavigationBar(

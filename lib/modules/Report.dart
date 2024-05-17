@@ -3,16 +3,17 @@ import 'dart:io';
 class Report {
 
   //attributes
-late int reportId  ;
+late int reportId ,confidence ;
 int? fireId;
 String reportStatus="onReview";
 late String city,addr,resourceType,resourcePath;
 String? audioPath , description , phoneNumber;
-late double positionLat , positionLong;
+late double positionLat , positionLong ;
 late DateTime reportDate;
 
 Report(){
   reportId=0;
+  confidence=0;
   this.city="";
   this.addr="";
   this.resourceType="";
@@ -32,6 +33,7 @@ setPhoneNumber(String? phoneNumber )=>this.phoneNumber=phoneNumber;
 setPositionLat(double positionLat )=>this.positionLat=positionLat;
 setPositionLong(double positionLong )=>this.positionLong=positionLong;
 setReportDate(DateTime reportDate )=>this.reportDate=reportDate;
+setConfidence(int confidence )=>this.confidence=confidence;
 
 
 deleteFiles()async{
@@ -43,7 +45,7 @@ deleteFiles()async{
 
 Map<String , dynamic> toMap(){
   return {
-  "reportId" : reportId, "fireId" : fireId, "reportStatus" : reportStatus, "reportDate" : reportDate,
+  "reportId" : reportId,"confidence":confidence ,"fireId" : fireId, "reportStatus" : reportStatus, "reportDate" : reportDate,
     "positionLat" : positionLat, "positionLong" : positionLong,
   "city" : city, "addr" : addr,
   "resourceType" : resourceType, "resourcePath" : resourcePath, "audioPath" : audioPath,
@@ -54,6 +56,7 @@ Map<String , dynamic> toMap(){
 
 Report.fromMap(Map<String , dynamic>map){
   reportId=int.parse(map['reportId']);
+  confidence=int.parse(map['confidence'].toString());
   fireId=int.tryParse(map['fireId'].toString());
   reportStatus=map['reportStatus'];
   city=map['city'];
@@ -71,7 +74,7 @@ Report.fromMap(Map<String , dynamic>map){
 @override
   String toString() {
     return """ Report: {
-    reportId : $reportId, fireId : $fireId, reportStatus : $reportStatus, reportDate : $reportDate,
+    reportId : $reportId, confidence:$confidence , fireId : $fireId, reportStatus : $reportStatus, reportDate : $reportDate,
     , positionLat : $positionLat, positionLong : $positionLong, 
     city : $city, addr : $addr, 
     resourceType : $resourceType, resourcePath : $resourcePath, audioPath : $audioPath,

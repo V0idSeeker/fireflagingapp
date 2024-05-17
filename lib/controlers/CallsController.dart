@@ -1,7 +1,22 @@
+import 'package:firesigneler/modules/DatabaseManeger.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CallsController extends GetxController{
+  late DatabaseManeger db;
+
+  onInit()async{
+    super.onInit();
+    db=DatabaseManeger();
+  }
+
+  getIp()=>db.getIp();
+
+  bool changeIp(String newIp){
+    if(!RegExp(r'\b((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\.){3}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])\b').hasMatch(newIp)) return false ;
+    db.setIp(newIp);
+    return true;
+  }
 
 
   EmergencyCall(String type)async{

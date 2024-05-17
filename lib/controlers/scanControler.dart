@@ -118,7 +118,7 @@ class ScanControler extends GetxController {
     report.setReportDate(DateTime.now());
     await db.sendReport(report);
     await report.deleteFiles();
-    print(report);
+
     return "Success";
   }
 
@@ -129,7 +129,7 @@ class ScanControler extends GetxController {
       List<CameraDescription> cameras = await availableCameras();
       cameraController = CameraController(
         cameras[0],
-        ResolutionPreset.high,
+        ResolutionPreset.max,
       );
 
       await cameraController.initialize().then((value) {
@@ -179,32 +179,33 @@ class ScanControler extends GetxController {
         imageHeight: image.height,
         imageWidth: image.width,
         iouThreshold: 0.4,
-        confThreshold: 0.2,
-        classThreshold: 0.5);
+        confThreshold: 0.1,
+        classThreshold: 0.1);
 
     if (detector != null) {
-      if (detector.length != 0 && detector.first["box"][4] * 100 > 20) {
+      if (detector.length != 0 && detector.first["box"][4] * 100 > 10) {
         var firstValue = detector.first;
         label = detector.first["tag"].toString();
         timer = 0;
         detect = true;
-
+        report.setConfidence((firstValue["box"][4]*100).round());
         double x1 = double.parse(firstValue['box'][0].toString());
         double x2 = double.parse(firstValue['box'][1].toString());
         double y1 = double.parse(firstValue['box'][2].toString());
         double y2 = double.parse(firstValue['box'][3].toString());
         if (x - x1 + y - x2 > 20)
-          print("cords :: x1 : $x1, y1: $y1, x2 : $x2 , y2: $y2");
+
 
         h = 100; //y2-y1;
         w = 100; //x2-x1;
         x = x1;
         y = x2;
+
       } else {
         timer++;
       }
 
-      if (timer >= 50) {
+      if (timer >= 20) {
         timer = 0;
         detect = false;
         w = 0;

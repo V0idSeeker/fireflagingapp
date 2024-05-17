@@ -8,18 +8,46 @@ import 'Fire.dart';
 import 'Report.dart';
 class DatabaseManeger {
   late Uri url;
-  String authgeo="741499549589927466382x105731";
+  static late String ip="192.168.1.111";
 
   DatabaseManeger() {
     //for local
-    url = Uri.http("192.168.1.111", "api/index.php");
-    //for partage
-    url=Uri.http("192.168.214.111", "api/index.php");
+
+    url = Uri.http(ip, "api/index.php");
+
+
+
   }
+  Future<bool> connectionStatus()async{
+    bool f;
+    try {
+      var response =await  post(url , body: {
+        "command": "connectionStatus",
+      }).timeout(Duration(milliseconds: 500));
+      if (response.statusCode == 200) f= true;
+      else f=false;
+    }catch(e){
+      f=false;
+    }
+
+    return f;
+
+
+  }
+  void setIp(String newIp) {
+    ip=newIp;
+    url = Uri.http(ip,"api/index.php");
+
+  }
+
+  String getIp()=>ip;
+
+
 
   //fire section
 
   Future<List<Fire>> getActiveLocalFires(String  city) async {
+
     var response=await post(url,body: {
       "command": "getActiveLocalFires",
       "city": city
@@ -36,6 +64,7 @@ class DatabaseManeger {
   //reports section
 
 Future<bool> sendReport(Report report)async{
+
 
   var request = MultipartRequest(
     'POST',url
@@ -71,7 +100,7 @@ Future<bool> sendReport(Report report)async{
     // Check if the upload was successful
     if (response.statusCode == 200) {
       print('Image uploaded successfully');
-      print(response.body);
+
     } else {
       print('Failed to upload image: ${response.statusCode}');
     }
@@ -85,21 +114,19 @@ Future<bool> sendReport(Report report)async{
 
 
 //geolocator api section
-latLongToCity(double lat , double long)async{
-  Uri geo = Uri.http("geocode.xyz","${lat},$long",{
-    "geoit":"json",
-    "auth":authgeo
-  });
-  var response = await get(geo);
-  dynamic decodedResponse = jsonDecode(response.body);
-  return {
-    "city":decodedResponse["city"],
-    "addr":decodedResponse["staddress"]
-    };
+ latLongToCity(double lat, double long) async {
+
+      var response = await post(url, body: {
+        "lat": lat.toString(),
+        "long": long.toString(),
+        "command": "latLongToCity"
+      });
+
+      return jsonDecode(response.body);
 
 
 
-}
+  }
 
 
 
