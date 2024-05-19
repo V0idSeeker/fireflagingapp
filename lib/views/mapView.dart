@@ -70,12 +70,11 @@ class MapView extends StatelessWidget {
                   Positioned(
                     top: 20,
                     left: 20,
-                    child: IconButton(
-
+                    child: ElevatedButton(
                         onPressed: () {
                           controller.moveMap(controller.currentPosition);
                         },
-                        icon: Icon(Icons.pin_drop_rounded)),
+                        child: Icon(Icons.pin_drop_rounded)),
                   ),
                   GetBuilder<MapViewController>(
                       id: "FiresList",

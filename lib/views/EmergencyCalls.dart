@@ -19,7 +19,7 @@ class EmergencyCalls extends StatelessWidget {
             child: Center(
               child: Container(
                 padding: EdgeInsets.all(16.0),
-                height: MediaQuery.of(context).size.height / 2,
+                height: MediaQuery.of(context).size.height / 1.5,
                 decoration: BoxDecoration(
                   color: styler.themeData.cardColor,
                   borderRadius: BorderRadius.circular(16),
