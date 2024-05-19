@@ -12,6 +12,7 @@ class InterfaceControler extends GetxController {
   late Widget mainscreen ;
   late DatabaseManeger db;
    bool isConnected=true;
+   int index=1;
 
 
   @override
@@ -51,9 +52,18 @@ class InterfaceControler extends GetxController {
     if(to=="Calls" && mainscreen is EmergencyCalls) return;
     if( to=="map" && mainscreen is  MapView)return ;
     if( to=="test" && mainscreen is  MapView)return ;
-    if(to=="map") mainscreen=new MapView();
-    if(to=="Calls") mainscreen=new EmergencyCalls();
-     if(to=="camera") mainscreen=new CameraView();
+    if(to=="map") {
+      index=0;
+      mainscreen = new MapView();
+    }
+    if(to=="camera") {
+      index=1;
+      mainscreen = new CameraView();
+    }
+    if(to=="Calls") {
+      index=2;
+      mainscreen = new EmergencyCalls();
+    }
 
     update();
 

@@ -1,9 +1,11 @@
 import 'package:firesigneler/controlers/interfaceControler.dart';
+import 'package:firesigneler/modules/Styler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 
 class MainScrean extends StatelessWidget {
-  const MainScrean({super.key});
+  final styler = Styler();
+   MainScrean({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,8 @@ class MainScrean extends StatelessWidget {
         controller.cnx();
         return Scaffold(
             body: controller.mainscreen,
-            bottomNavigationBar: BottomNavigationBar(
+            bottomNavigationBar: styler.bottomNavigationBar(
+              currentIndex: controller.index,
               onTap: (index) {
                 switch (index) {
                   case 0:

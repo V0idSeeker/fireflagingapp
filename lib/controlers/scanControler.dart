@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:firesigneler/modules/DatabaseManeger.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_sound/public/flutter_sound_recorder.dart';
 import 'package:flutter_vision/flutter_vision.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../modules/Report.dart';
+
 
 class ScanControler extends GetxController {
   late CameraController cameraController;
@@ -28,6 +30,7 @@ class ScanControler extends GetxController {
   late FlutterVision vision;
   late Report report;
   late DatabaseManeger db;
+  double currentZoomLevel = 1.0, maxZoomLevel = 1.0;
 
   @override
   onInit() {
@@ -61,6 +64,22 @@ class ScanControler extends GetxController {
     isVideoRecording = false;
 
     update(["CameraControls"]);
+  }
+
+  void focusOnPoint(Offset point, BoxConstraints constraints) async {
+    if (cameraController != null) {
+      double x = point.dx / constraints.maxWidth;
+      double y = point.dy / constraints.maxHeight;
+      await cameraController!.setFocusPoint(Offset(x, y));
+    }
+  }
+  void setZoomLevel(double zoomLevel) async {
+    if (cameraController != null) {
+      double newZoomLevel = zoomLevel.clamp(1.0, maxZoomLevel);
+      await cameraController!.setZoomLevel(newZoomLevel);
+      currentZoomLevel = newZoomLevel;
+      update(['CameraControls']); // Update the UI
+    }
   }
 
   startVideoRecord() async {
@@ -129,7 +148,7 @@ class ScanControler extends GetxController {
       List<CameraDescription> cameras = await availableCameras();
       cameraController = CameraController(
         cameras[0],
-        ResolutionPreset.max,
+        ResolutionPreset.high,
       );
 
       await cameraController.initialize().then((value) {
@@ -144,6 +163,7 @@ class ScanControler extends GetxController {
         });
       });
       cameraController.setFlashMode(FlashMode.off);
+      maxZoomLevel = await cameraController.getMaxZoomLevel() ;
       isCameraInitialised = true;
       update();
     } else
@@ -161,6 +181,7 @@ class ScanControler extends GetxController {
         numThreads: 1,
         useGpu: false);
   }
+
 
   //vocalRecorder
   Future<void> _initVocalRecorder() async {
@@ -196,7 +217,7 @@ class ScanControler extends GetxController {
         if (x - x1 + y - x2 > 20)
 
 
-        h = 100; //y2-y1;
+          h = 100; //y2-y1;
         w = 100; //x2-x1;
         x = x1;
         y = x2;
@@ -205,14 +226,13 @@ class ScanControler extends GetxController {
         timer++;
       }
 
-      if (timer >= 20) {
+      if (timer >= 25) {
         timer = 0;
         detect = false;
-        w = 0;
-        h = 0;
+
       }
 
-      update();
+      update(["CameraBorder","CameraControls"]);
     }
   }
 }
