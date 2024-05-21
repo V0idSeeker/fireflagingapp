@@ -13,47 +13,53 @@ class MainScrean extends StatelessWidget {
       init: InterfaceControler(),
       builder: (controller) {
         controller.cnx();
-        return Scaffold(
-            body: controller.mainscreen,
-            bottomNavigationBar: styler.bottomNavigationBar(
-              currentIndex: controller.index,
-              onTap: (index) {
-                switch (index) {
-                  case 0:
-                    {
-                      controller.changeScreen("map");
+        return GetBuilder<InterfaceControler>(
+          id:"Screen",
+          init: InterfaceControler(),
+          builder: (context) {
+            return Scaffold(
+                body: controller.mainscreen,
+                bottomNavigationBar: styler.bottomNavigationBar(
+                  currentIndex: controller.index,
+                  onTap: (index) {
+                    switch (index) {
+                      case 0:
+                        {
+                          controller.changeScreen("map");
 
-                      break;
+                          break;
+                        }
+
+                      case 1:
+                        {
+                          controller.changeScreen("camera");
+
+                          break;
+                        }
+                      case 2:
+                        {
+                          controller.changeScreen("Calls");
+                          break;
+                        }
+
                     }
-
-                  case 1:
-                    {
-                      controller.changeScreen("camera");
-
-                      break;
-                    }
-                  case 2:
-                    {
-                      controller.changeScreen("Calls");
-                      break;
-                    }
-
-                }
-                ;
-              },
-              items: [
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.map), label: "Fire Map"),
-                BottomNavigationBarItem(
+                    ;
+                  },
+                  items: [
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.map), label: "Fire Map"),
+                    BottomNavigationBarItem(
 
 
-                    icon: Icon(Icons.camera), label: "Camera"),
+                        icon: Icon(Icons.camera), label: "Camera"),
 
 
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.call), label: "Emergency Numbers"),
-              ],
-            ));
+                    BottomNavigationBarItem(
+                        icon: Icon(Icons.call), label: "Emergency Numbers"),
+                  ],
+                ));
+          }
+        );
       },
     );
   }

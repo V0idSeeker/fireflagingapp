@@ -7,8 +7,8 @@ import 'package:http/http.dart';
 import 'Fire.dart';
 import 'Report.dart';
 class DatabaseManeger {
-  late Uri url;
-  static late String ip="192.168.1.111";
+ static late  Uri url;
+  static String ip="192.168.1.111";
 
   DatabaseManeger() {
     //for local
@@ -16,14 +16,17 @@ class DatabaseManeger {
     url = Uri.http(ip, "api/index.php");
 
 
-
   }
   Future<bool> connectionStatus()async{
+
     bool f;
+
     try {
+      print("dcfsdfsdf $url");
       var response =await  post(url , body: {
         "command": "connectionStatus",
-      }).timeout(Duration(milliseconds: 800));
+      }).timeout(Duration(milliseconds: 500));
+      print(response.statusCode);
       if (response.statusCode == 200) f= true;
       else f=false;
     }catch(e){
@@ -35,8 +38,10 @@ class DatabaseManeger {
 
   }
   void setIp(String newIp) {
+    print("old ip is : $url");
     ip=newIp;
     url = Uri.http(ip,"api/index.php");
+    print("new ip is : $url");
 
   }
 
