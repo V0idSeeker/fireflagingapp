@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     Styler styler = Styler();
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Wildfire Watch',
       theme: styler.themeData,
       home: MainScrean(),
     );

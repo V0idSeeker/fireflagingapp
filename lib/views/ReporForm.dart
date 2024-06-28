@@ -23,6 +23,7 @@ class ReportForm extends StatelessWidget {
                   return Form(
                     key: formkey,
                     child: Container(
+
                       padding: EdgeInsets.all(16.0),
                       width: MediaQuery.of(context).size.width / 1.2,
                       height: MediaQuery.of(context).size.height / 1.2,
@@ -190,6 +191,7 @@ class ReportForm extends StatelessWidget {
                                                       ),
                                                     ],
                                                   );
+
                                                 return styler.returnDialog(
                                                   title: snapshot.data!,
                                                   content: SizedBox(height: 20,),
